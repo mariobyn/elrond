@@ -164,7 +164,9 @@ then
 
       read r_ratingModifier r_shardId r_tempRating r_numLeaderSuccess r_numLeaderFailure r_numValidatorSuccess r_numValidatorFailure r_numValidatorIgnoredSignatures r_rating r_totalNumLeaderSuccess r_totalNumLeaderFailure r_totalNumValidatorSuccess r_totalNumValidatorFailure r_totalNumValidatorIgnoredSignatures \
       < <(echo $(jq '.ratingModifier, .shardId, .tempRating, .numLeaderSuccess, .numLeaderFailure, .numValidatorSuccess, .numValidatorFailure, .numValidatorIgnoredSignatures, .rating, .totalNumLeaderSuccess, .totalNumLeaderFailure, .totalNumValidatorSuccess, .totalNumValidatorFailure, .totalNumValidatorIgnoredSignatures' -r <<< $bufStats))
-
+    if [[ $p_chainID == "T" ]]; then
+	    p_chainID=0
+    fi
       printf "%s\n" "elrond_node_r_rating_modifier{$metricLabels} $r_ratingModifier" \
               "elrond_node_r_shard_id{$metricLabels} $r_shardId" \
               "elrond_node_r_epoch_rating{$metricLabels} $r_tempRating" \
