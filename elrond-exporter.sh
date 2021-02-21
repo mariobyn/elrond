@@ -11,11 +11,11 @@
 #IDENTITY=$E_IDENTITY
 #OBSERVER_URL=${E_OBSERVER_URL:="https://api.elrond.com"}
 
-LOCAL_METRICS=0 #Enable local metrics
-LOCAL_NODES=(http://rpc-url:8080 http://rpc-url:8081)  #Insert your own nodes inside the paranthesis
-REMOTE_METRICS=1
-OBSERVER_URL="https://api.elrond.com" # The observer must be on meta chain in order to work.
-IDENTITY="YOUR-KEYBASE-IDENTITY-HERE" # Edit this with your own identity
+LOCAL_METRICS=1 #Enable local metrics
+LOCAL_NODES=(http://localhost:8080)  #Insert your own nodes inside the paranthesis
+REMOTE_METRICS=0
+OBSERVER_URL="http://44.242.157.32:8079" # The observer must be on meta chain in order to work.
+IDENTITY="sbt-testnet-2" # Edit this with your own identity
 
 # LOCAL_NODES: Array containing the nodes you want to generate local metrics from.
 if [[ -z "$LOCAL_NODES" ]]; then LOCAL_METRICS=0; fi
@@ -98,7 +98,9 @@ then
                       "elrond_node_type{$metricsLabels_validator} 0"
         ;;
     esac
-
+    if [[ $p_chainID == "T" ]]; then
+	    p_chainID=0
+    fi
     printf "%s\n" "elrond_node_sync_status{$metricLabels} $syncStatus" \
                   "elrond_node_chain_id{$metricLabels} $p_chainID" \
                   "elrond_node_epoch_number{$metricLabels} $epochNumber" \
@@ -164,9 +166,6 @@ then
 
       read r_ratingModifier r_shardId r_tempRating r_numLeaderSuccess r_numLeaderFailure r_numValidatorSuccess r_numValidatorFailure r_numValidatorIgnoredSignatures r_rating r_totalNumLeaderSuccess r_totalNumLeaderFailure r_totalNumValidatorSuccess r_totalNumValidatorFailure r_totalNumValidatorIgnoredSignatures \
       < <(echo $(jq '.ratingModifier, .shardId, .tempRating, .numLeaderSuccess, .numLeaderFailure, .numValidatorSuccess, .numValidatorFailure, .numValidatorIgnoredSignatures, .rating, .totalNumLeaderSuccess, .totalNumLeaderFailure, .totalNumValidatorSuccess, .totalNumValidatorFailure, .totalNumValidatorIgnoredSignatures' -r <<< $bufStats))
-    if [[ $p_chainID == "T" ]]; then
-	    p_chainID=0
-    fi
       printf "%s\n" "elrond_node_r_rating_modifier{$metricLabels} $r_ratingModifier" \
               "elrond_node_r_shard_id{$metricLabels} $r_shardId" \
               "elrond_node_r_epoch_rating{$metricLabels} $r_tempRating" \
